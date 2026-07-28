@@ -1,0 +1,234 @@
+:root {
+  --bg: #f6f0e5;
+  --surface: #ffffff;
+  --primary: #35654d;
+  --primary-dark: #264a37;
+  --text: #243128;
+  --muted: #5f6f62;
+  --eyebrow-space: 0.2rem; 
+  --animate-duration: 0.8s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #f9f4ea 0%, var(--bg) 100%);
+  line-height: 1.6;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #4d7f5e 100%);
+  color: white;
+  padding: 2rem 1.5rem 3rem;
+  min-height: 250px;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 left;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp var(--animate-duration) ease-out forwards;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.80em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.9;
+  order: 10;
+  margin-top: var(--eyebrow-space); 
+  
+
+    /* 🎬 2. Fade in the eyebrow slightly later (staggered effect) */
+  opacity: 0; /* Starts invisible so it doesn't flash on screen */
+  animation: fadeIn var(--animate-duration) ease-out forwards;
+  animation-delay: 0.4s; /* Waits for the main content to finish sliding */
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  margin: 0.2rem 0 0.6rem;
+}
+
+.lead {
+  font-size: 1.1rem;
+  max-width: 650px;
+  margin-bottom: 1.4rem;
+}
+
+.button {
+  display: inline-block;
+  background: white;
+  color: var(--primary-dark);
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.button.secondary {
+  background: var(--primary-dark);
+  color: white;
+}
+
+.tabs-shell {
+  max-width: 100%;
+  margin: -3.5rem auto 0; 
+  padding: 0 0 2re
+}
+
+.tab-list {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--primary-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tab-list .tab-button {
+  flex: 1 1 0%;
+  min-width: 0;
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 1.2rem 0.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.2s ease;
+}
+
+.tab-list .tab-button:hover {
+  color: #ffffff;
+}
+
+.tab-list .tab-button.active {
+  color: #ffffff;
+  background: transparent;
+  box-shadow: none;
+}
+
+.tab-list .tab-button::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: background-color 0.2s ease;
+}
+
+.tab-list .tab-button:hover::after,
+.tab-list .tab-button:focus::after {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.tab-list .tab-button.active::after {
+  background-color: #ffffff;
+}
+
+.tab-panels {
+  position: relative;
+}
+
+.tab-panel {
+  display: block;
+  min-height: 220px;
+  padding: 1.4rem;
+  border-radius: 0 0 24px 24px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 12px 30px rgba(31, 54, 39, 0.1);
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.tab-panel:empty {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 247, 241, 0.95));
+}
+
+.section {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 0;
+}
+
+.section-heading {
+  margin-bottom: 1rem;
+}
+
+.cards {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.card {
+  background: var(--surface);
+  padding: 1.4rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(31, 54, 39, 0.08);
+}
+
+.callout {
+  background: var(--surface);
+  border-radius: 20px;
+  margin: 3rem auto 4rem;
+  box-shadow: 0 10px 25px rgba(31, 54, 39, 0.08);
+  text-align: center;
+}
+
+/* Animations */
+/* Animates opacity and shifts position upward */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* Starts 20px lower */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);    /* Ends at natural position */
+  }
+}
+
+/* Smooth fade-in without moving position */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.9; /* Matches your design's 0.9 opacity */
+  }
+}

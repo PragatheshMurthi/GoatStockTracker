@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fresheee</title>
+    <meta
+      name="description"
+      content="Website for the life stock management and feed records."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Fresheee Farms</h1>
+        <p class="eyebrow">taste of GODS</p>
+      </div>
+    </header>
+
+    <section class="tabs-shell" aria-label="Project views">
+      <div class="tab-list" role="tablist">
+        <button class="tab-button active" type="button" data-target="tab-view-1">Overview</button>
+        <button class="tab-button" type="button" data-target="tab-view-2">Inventory Pojection</button>
+        <button class="tab-button" type="button" data-target="tab-view-3">Weight Management</button>
+        <button class="tab-button" type="button" data-target="tab-view-4">Profit projection</button>
+        <button class="tab-button" type="button" data-target="tab-view-5">Spendings</button>
+      </div>
+
+      <div class="tab-panels">
+        <section class="tab-panel active" id="tab-view-1" role="tabpanel"></section>
+        <section class="tab-panel" id="tab-view-2" role="tabpanel"></section>
+        <section class="tab-panel" id="tab-view-3" role="tabpanel"></section>
+        <section class="tab-panel" id="tab-view-4" role="tabpanel"></section>
+        <section class="tab-panel" id="tab-view-5" role="tabpanel"></section>
+      </div>
+    </section>
+
+    <main>
+      <section id="overview" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Overview</p>
+          <h2>Track your goats with confidence</h2>
+        </div>
+        <p>
+          GoatStockTracker is a lightweight tool designed for goat farm operators who
+          want a practical way to manage livestock details and feed-related records.
+          The project is now presented as a GitHub Pages site so it is easy to share
+          with farm staff and collaborators.
+        </p>
+      </section>
+
+      <section id="features" class="section cards">
+        <article class="card">
+          <h3>Stock tracking</h3>
+          <p>Monitor goat inventory and maintain a clear view of each animal or group.</p>
+        </article>
+        <article class="card">
+          <h3>Feed management</h3>
+          <p>Log feeding activity and keep the day-to-day nutrition plan organized.</p>
+        </article>
+        <article class="card">
+          <h3>Simple workflow</h3>
+          <p>Use a clean, easy-to-understand interface that supports everyday farm tasks.</p>
+        </article>
+      </section>
+
+      <section class="section callout">
+        <h2>Ready to get started?</h2>
+        <p>
+          Visit the repository to review the project details and see how the tracker is
+          being developed.
+        </p>
+        <a class="button secondary" href="https://github.com" target="_blank" rel="noreferrer">
+          Open GitHub repository
+        </a>
+      </section>
+    </main>
+
+    <script>
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.dataset.target;
+
+          tabButtons.forEach((tab) => tab.classList.toggle('active', tab === button));
+          tabPanels.forEach((panel) => {
+            panel.classList.toggle('active', panel.id === targetId);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
