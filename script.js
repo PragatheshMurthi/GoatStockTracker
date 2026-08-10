@@ -71,6 +71,10 @@
         if (!targetPanel) return;
 
         setSubTabState(button, targetPanel);
+
+        if (targetId === "spending-history") {
+            renderHistory();
+        }
     }
 
     tabButtons.forEach((button) => {
@@ -119,13 +123,47 @@
     const saveExpense = document.getElementById("saveExpense");
 
     if (saveExpense) {
-        saveExpense.addEventListener("click", () => {
-            const original = saveExpense.innerHTML;
-            saveExpense.innerHTML = "<span>Saved visually ✓</span>";
+        saveExpense.addEventListener("click", async () => {
 
-            window.setTimeout(() => {
-                saveExpense.innerHTML = original;
-            }, 1400);
+            const expense = {
+                name: expenseName.value,
+                category: expenseCategory.value,
+                amount: expenseAmount.value,
+                date: expenseDate.value,
+                description: expenseDescription.value
+            };
+
+            console.log("Saving:", expense);
+
+            // Disable button while saving
+            saveExpense.disabled = true;
+            saveExpense.classList.add("saving");
+
+            const original = saveExpense.innerHTML;
+            saveExpense.innerHTML = "<span>Saving...</span>";
+
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                saveExpense.innerHTML = "<span>Saved ✓</span>";
+
+                // Refresh history if needed
+                // await renderHistory();
+
+            } catch (error) {
+
+                saveExpense.innerHTML = "<span>Save Failed ✕</span>";
+                console.error(error);
+
+            } finally {
+
+                setTimeout(() => {
+                    saveExpense.innerHTML = original;
+                    saveExpense.disabled = false;
+                    saveExpense.classList.remove("saving");
+                }, 1500);
+            }
         });
     }
 
@@ -149,3 +187,67 @@
         }
     });
 })();
+
+async function fetchSpendingHistory() {
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([
+        {
+          date: "Todayyyy",
+          name: "Goat Feed",
+          category: "Feed",
+          amount: 2500
+        },
+        {
+          date: "Yesterday",
+          name: "Veterinary Check",
+          category: "Veterinary",
+          amount: 850
+        },
+        {
+          date: "02 Aug",
+          name: "Transport",
+          category: "Transport",
+          amount: 1200
+        }
+      ]);
+    }, 500);
+  });
+
+}
+
+async function renderHistory() {
+
+  const history = await fetchSpendingHistory();
+
+  const tbody = document.getElementById(
+    "spending-history-body"
+  );
+
+  tbody.innerHTML = "";
+
+  let total = 0;
+
+  history.forEach(item => {
+
+    total += item.amount;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.date}</td>
+        <td>${item.name}</td>
+        <td>
+          <span class="category-pill">
+            ${item.category}
+          </span>
+        </td>
+        <td>₹ ${item.amount.toLocaleString()}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById(
+    "total-spending"
+  ).textContent = `₹ ${total.toLocaleString()}.00`;
+}

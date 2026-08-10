@@ -206,8 +206,7 @@
 
                 <div class="history-toolbar">
                   <div>
-                    <h3>Spending history</h3>
-                    <p>Dummy records for the visual prototype.</p>
+                    <h3>History</h3>
                   </div>
                   <button class="filter-button" type="button">Filter ▾</button>
                 </div>
@@ -222,32 +221,16 @@
                         <th>Amount</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>Today</td>
-                        <td>Goat Feed</td>
-                        <td><span class="category-pill">Feed</span></td>
-                        <td>₹ 2,500</td>
-                      </tr>
-                      <tr>
-                        <td>Yesterday</td>
-                        <td>Veterinary check</td>
-                        <td><span class="category-pill">Veterinary</span></td>
-                        <td>₹ 850</td>
-                      </tr>
-                      <tr>
-                        <td>02 Aug</td>
-                        <td>Transport</td>
-                        <td><span class="category-pill">Transport</span></td>
-                        <td>₹ 1,200</td>
-                      </tr>
+
+                    <tbody id="spending-history-body">
                     </tbody>
+
                   </table>
                 </div>
 
                 <div class="spending-total">
                   <span>Total spending</span>
-                  <strong>₹ 4,550.00</strong>
+                  <strong id="total-spending">₹ 0.00</strong>
                 </div>
 
               </div>
