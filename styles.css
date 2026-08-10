@@ -170,6 +170,7 @@ h1 {
   opacity: 1;
   display: block;
   visibility: visible;
+  pointer-events: auto;
   animation: tabFadeIn 0.35s ease-out forwards;
 }
 
@@ -238,11 +239,12 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 18px;
   background: #eef4ef;
+  position: relative;
+  z-index: 999;
+  isolation: isolate;
 }
 
 .sub-tab {
-    position: relative;
-    z-index: 999;
 
     display: flex;
     align-items: center;
@@ -304,6 +306,7 @@ h1 {
 .sub-tab-panels {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   height: auto;
@@ -313,6 +316,9 @@ h1 {
 
 .sub-panel {
   grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  display: none;
   min-width: 0;
   padding: 1.8rem clamp(1rem, 4vw, 2.5rem) 2.2rem;
 
@@ -320,19 +326,16 @@ h1 {
   visibility: hidden;
   pointer-events: none;
   transform: translateY(12px);
-
-  transition:
-    opacity 0.3s ease,
-    transform 0.4s ease,
-    visibility 0s linear 0.4s;
 }
 
 .sub-panel.active {
+  display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
-  z-index: 2;
+  z-index: 3;
+  animation: tabFadeIn 0.3s ease-out;
 }
 
 /* FORM */
