@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fresheee</title>
-    <meta
-      name="description"
-      content="Website for the life stock management and feed records."
-    />
+    <meta name="description" content="Website for the life stock management and feed records." />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -21,76 +18,253 @@
     <section class="tabs-shell" aria-label="Project views">
       <div class="tab-list" role="tablist">
         <button class="tab-button active" type="button" data-target="tab-view-1">Overview</button>
-        <button class="tab-button" type="button" data-target="tab-view-2">Inventory Pojection</button>
+        <button class="tab-button" type="button" data-target="tab-view-2">Inventory Projection</button>
         <button class="tab-button" type="button" data-target="tab-view-3">Weight Management</button>
         <button class="tab-button" type="button" data-target="tab-view-4">Profit projection</button>
         <button class="tab-button" type="button" data-target="tab-view-5">Spendings</button>
       </div>
 
       <div class="tab-panels">
-        <section class="tab-panel active" id="tab-view-1" role="tabpanel"></section>
-        <section class="tab-panel" id="tab-view-2" role="tabpanel"></section>
-        <section class="tab-panel" id="tab-view-3" role="tabpanel"></section>
-        <section class="tab-panel" id="tab-view-4" role="tabpanel"></section>
-        <section class="tab-panel" id="tab-view-5" role="tabpanel"></section>
+        <!-- 🟢 TAB PANEL 1: OVERVIEW CONTENT HOUSES THE INLINE BLOCKS NOW -->
+        <section class="tab-panel active" id="tab-view-1" role="tabpanel">
+          <div id="overview" class="section">
+            <div class="section-heading">
+              <p class="eyebrow">Overview</p>
+              <h2>Track your goats with confidence</h2>
+            </div>
+            <p>
+              GoatStockTracker is a lightweight tool designed for goat farm operators who
+              want a practical way to manage livestock details and feed-related records.
+              The project is now presented as a GitHub Pages site so it is easy to share
+              with farm staff and collaborators.
+            </p>
+          </div>
+
+          <div id="features" class="section cards">
+            <article class="card">
+              <h3>Stock tracking</h3>
+              <p>Monitor goat inventory and maintain a clear view of each animal or group.</p>
+            </article>
+            <article class="card">
+              <h3>Feed management</h3>
+              <p>Log feeding activity and keep the day-to-day nutrition plan organized.</p>
+            </article>
+            <article class="card">
+              <h3>Simple workflow</h3>
+              <p>Use a clean, easy-to-understand interface that supports everyday farm tasks.</p>
+            </article>
+          </div>
+
+          <div class="section callout">
+            <h2>Ready to get started?</h2>
+            <p>
+              Visit the repository to review the project details and see how the tracker is
+              being developed.
+            </p>
+            <a class="button secondary" href="https://github.com" target="_blank" rel="noreferrer">
+              Open GitHub repository
+            </a>
+          </div>
+        </section>
+
+        <!-- 🟢 TAB PANEL 2 -->
+        <section class="tab-panel" id="tab-view-2" role="tabpanel">
+          <div class="section">
+            <h2>Inventory Projection</h2>
+            <p>Your dynamic livestock projection data and trends render here.</p>
+          </div>
+        </section>
+
+        <!-- 🟢 TAB PANEL 3 -->
+        <section class="tab-panel" id="tab-view-3" role="tabpanel">
+          <div class="section">
+            <h2>Weight Management</h2>
+            <p>Track animal weights, historic feed charts, and performance metrics here.</p>
+          </div>
+        </section>
+
+        <!-- 🟢 TAB PANEL 4 -->
+        <section class="tab-panel" id="tab-view-4" role="tabpanel">
+          <div class="section">
+            <h2>Profit Projection</h2>
+            <p>Financial margins, cost calculations, and farming ROI display here.</p>
+          </div>
+        </section>
+
+       <!-- SPENDINGS -->
+        <section class="tab-panel" id="tab-view-5" role="tabpanel">
+          <div class="spendings-container">
+
+            <div class="spendings-header">
+              <div>
+                <p class="eyebrow eyebrow-dark">Finance Console</p>
+                <h2>Spendings</h2>
+                <p>Record a new expense or review previously recorded spending.</p>
+              </div>
+            </div>
+
+            <!-- INNER SPENDING TABS -->
+            <div class="sub-tab-list" role="tablist" aria-label="Spendings views">
+              <button class="sub-tab active" type="button"
+                      data-subtarget="spending-entry">
+                <span class="sub-tab-icon">＋</span>
+                <span>
+                  <strong>What did you spend?</strong>
+                  <small>Enter a new expense</small>
+                </span>
+              </button>
+
+              <button class="sub-tab" type="button"
+                      data-subtarget="spending-history">
+                <span class="sub-tab-icon">◫</span>
+                <span>
+                  <strong>Know your spendings</strong>
+                  <small>View recorded expenses</small>
+                </span>
+              </button>
+            </div>
+
+            <div class="sub-tab-panels">
+
+              <!-- DATA ENTRY -->
+              <div class="sub-panel active" id="spending-entry">
+
+                <div class="form-grid">
+
+                  <div class="field">
+                    <label for="expense-name">Name</label>
+                    <input id="expense-name" type="text"
+                           placeholder="e.g. Goat feed">
+                  </div>
+
+                  <div class="field">
+                    <label for="expense-category">Category</label>
+                    <select id="expense-category">
+                      <option value="">Select category</option>
+                      <option>Feed</option>
+                      <option>Medicine</option>
+                      <option>Veterinary</option>
+                      <option>Transport</option>
+                      <option>Equipment</option>
+                      <option>Labour</option>
+                      <option>Maintenance</option>
+                      <option>Utilities</option>
+                      <option>Purchase</option>
+                      <option>Other</option>
+                    </select>
+                    <small class="field-hint">
+                      Need another category? Add another
+                      <code>&lt;option&gt;</code> inside this select in the HTML.
+                    </small>
+                  </div>
+
+                  <div class="field">
+                    <label for="expense-amount">Amount</label>
+                    <div class="money-input">
+                      <span>₹</span>
+                      <input id="expense-amount" type="number"
+                             min="0" step="0.01" placeholder="0.00">
+                    </div>
+                  </div>
+
+                  <div class="field date-field">
+                    <label for="expense-date">
+                      Date <span class="optional">(optional)</span>
+                    </label>
+                    <input id="expense-date" type="date">
+                    <button class="today-button" type="button" id="todayButton">
+                      Use today
+                    </button>
+                  </div>
+
+                  <div class="field description-field">
+                    <label for="expense-description">Description</label>
+                    <textarea id="expense-description" rows="5"
+                              placeholder="Add notes about this expense..."></textarea>
+                  </div>
+
+                  <div class="field attachment-field">
+                    <label>Attachments</label>
+                    <label class="upload-zone" for="expense-attachment">
+                      <span class="upload-icon">↑</span>
+                      <strong>Attach file</strong>
+                      <small>PDF, image or document</small>
+                    </label>
+                    <input id="expense-attachment" type="file" hidden>
+                  </div>
+
+                </div>
+
+                <div class="form-actions">
+                  <button class="button ghost" type="button" id="clearExpense">
+                    Clear
+                  </button>
+                  <button class="button futuristic" type="button" id="saveExpense">
+                    <span>Save spending</span>
+                    <span class="button-arrow">→</span>
+                  </button>
+                </div>
+
+                <p class="dummy-note">
+                  DEMO MODE · Save action is visual only. Database integration can be connected later.
+                </p>
+              </div>
+
+              <!-- DATA READING -->
+              <div class="sub-panel" id="spending-history">
+
+                <div class="history-toolbar">
+                  <div>
+                    <h3>Spending history</h3>
+                    <p>Dummy records for the visual prototype.</p>
+                  </div>
+                  <button class="filter-button" type="button">Filter ▾</button>
+                </div>
+
+                <div class="spending-table-wrap">
+                  <table class="spending-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Today</td>
+                        <td>Goat Feed</td>
+                        <td><span class="category-pill">Feed</span></td>
+                        <td>₹ 2,500</td>
+                      </tr>
+                      <tr>
+                        <td>Yesterday</td>
+                        <td>Veterinary check</td>
+                        <td><span class="category-pill">Veterinary</span></td>
+                        <td>₹ 850</td>
+                      </tr>
+                      <tr>
+                        <td>02 Aug</td>
+                        <td>Transport</td>
+                        <td><span class="category-pill">Transport</span></td>
+                        <td>₹ 1,200</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="spending-total">
+                  <span>Total spending</span>
+                  <strong>₹ 4,550.00</strong>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
-
-    <main>
-      <section id="overview" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Overview</p>
-          <h2>Track your goats with confidence</h2>
-        </div>
-        <p>
-          GoatStockTracker is a lightweight tool designed for goat farm operators who
-          want a practical way to manage livestock details and feed-related records.
-          The project is now presented as a GitHub Pages site so it is easy to share
-          with farm staff and collaborators.
-        </p>
-      </section>
-
-      <section id="features" class="section cards">
-        <article class="card">
-          <h3>Stock tracking</h3>
-          <p>Monitor goat inventory and maintain a clear view of each animal or group.</p>
-        </article>
-        <article class="card">
-          <h3>Feed management</h3>
-          <p>Log feeding activity and keep the day-to-day nutrition plan organized.</p>
-        </article>
-        <article class="card">
-          <h3>Simple workflow</h3>
-          <p>Use a clean, easy-to-understand interface that supports everyday farm tasks.</p>
-        </article>
-      </section>
-
-      <section class="section callout">
-        <h2>Ready to get started?</h2>
-        <p>
-          Visit the repository to review the project details and see how the tracker is
-          being developed.
-        </p>
-        <a class="button secondary" href="https://github.com" target="_blank" rel="noreferrer">
-          Open GitHub repository
-        </a>
-      </section>
-    </main>
-
-    <script>
-      const tabButtons = document.querySelectorAll('.tab-button');
-      const tabPanels = document.querySelectorAll('.tab-panel');
-
-      tabButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          const targetId = button.dataset.target;
-
-          tabButtons.forEach((tab) => tab.classList.toggle('active', tab === button));
-          tabPanels.forEach((panel) => {
-            panel.classList.toggle('active', panel.id === targetId);
-          });
-        });
-      });
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
