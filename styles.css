@@ -21,16 +21,17 @@ body {
   line-height: 1.6;
 }
 
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--primary) 0%, #4d7f5e 100%);
   color: white;
-  padding: 2rem 1.5rem 3rem;
+  padding: 3rem 1.5rem 5rem; /* Increased bottom padding to accommodate negative margin offset */
   min-height: 250px;
 }
 
 .hero-content {
-  max-width: 800px;
-  margin: 0 left;
+  max-width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   animation: fadeInUp var(--animate-duration) ease-out forwards;
@@ -41,55 +42,31 @@ body {
   letter-spacing: 0.80em;
   font-size: 0.8rem;
   font-weight: 700;
-  opacity: 0.9;
+  opacity: 0; /* Starts hidden for stagger animation execution */
   order: 10;
   margin-top: var(--eyebrow-space); 
-  
-
-    /* 🎬 2. Fade in the eyebrow slightly later (staggered effect) */
-  opacity: 0; /* Starts invisible so it doesn't flash on screen */
   animation: fadeIn var(--animate-duration) ease-out forwards;
-  animation-delay: 0.4s; /* Waits for the main content to finish sliding */
+  animation-delay: 0.4s;
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   line-height: 1.2;
 }
 
 h1 {
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
   margin: 0.2rem 0 0.6rem;
 }
 
-.lead {
-  font-size: 1.1rem;
-  max-width: 650px;
-  margin-bottom: 1.4rem;
-}
-
-.button {
-  display: inline-block;
-  background: white;
-  color: var(--primary-dark);
-  padding: 0.8rem 1.2rem;
-  border-radius: 999px;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.button.secondary {
-  background: var(--primary-dark);
-  color: white;
-}
-
+/* Tabs Architecture with Native Container Height Calculations */
 .tabs-shell {
   max-width: 100%;
+  width: 100%; 
   margin: -3.5rem auto 0; 
-  padding: 0 0 2re
+  padding: 0 1rem 4rem;
 }
 
+/* Responsive Navigation Bar setup */
 .tab-list {
   display: flex;
   flex-wrap: nowrap;
@@ -97,37 +74,47 @@ h1 {
   margin: 0;
   padding: 0;
   list-style: none;
-  background: var(--primary-light);
+  background: var(--primary-dark);
+  border-radius: 16px 16px 0 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  
+  /* Mobile Swipe Control System */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox clear scroll */
+}
+
+.tab-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera hide */
 }
 
 .tab-list .tab-button {
-  flex: 1 1 0%;
-  min-width: 0;
+  flex: 1 0 auto; /* Stop buttons from getting crushed horizontally */
+  min-width: 120px; /* Safe human-touch mobile targets */
   position: relative;
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   line-height: 1;
-  padding: 1.2rem 0.5rem;
+  padding: 1.2rem 0.75rem;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   transition: color 0.2s ease;
 }
 
-.tab-list .tab-button:hover {
+.tab-list .tab-button:hover,
+.tab-list .tab-button:focus {
   color: #ffffff;
+  outline: none;
 }
 
 .tab-list .tab-button.active {
   color: #ffffff;
-  background: transparent;
-  box-shadow: none;
 }
 
 .tab-list .tab-button::after {
@@ -136,7 +123,6 @@ h1 {
   width: 100%;
   height: 3px;
   background: transparent;
-  margin: 0;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -145,90 +131,676 @@ h1 {
 
 .tab-list .tab-button:hover::after,
 .tab-list .tab-button:focus::after {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .tab-list .tab-button.active::after {
   background-color: #ffffff;
 }
 
+/* Stacking System to support Layout Flow without Hardcoding Heights */
 .tab-panels {
-  position: relative;
+  display: block;
+  width: 100%;
 }
 
 .tab-panel {
-  display: block;
-  min-height: 220px;
-  padding: 1.4rem;
+  grid-area: 1 / 1 / 2 / 2; /* All elements occupy the identical cell grid block layout area space */
+  width: 100%;
+  padding: 2rem 1.5rem;
   border-radius: 0 0 24px 24px;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 12px 30px rgba(31, 54, 39, 0.1);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(31, 54, 39, 0.08);
+  
+  /* Retain original design scale transitions */
   opacity: 0;
-  transform: translateY(24px) scale(0.98);
+  transform: translateY(20px) scale(0.99);
   pointer-events: none;
+  
+  visibility: hidden;
+
   transition: opacity 0.35s ease, transform 0.35s ease;
+  /* 🛠️ THE FIX: Completely hide inactive panels from layout calculation tracking */
+  display: none; 
+  
 }
 
+/* Overwrite stack configurations on active item */
 .tab-panel.active {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
+  display: block;
+  visibility: visible;
+  animation: tabFadeIn 0.35s ease-out forwards;
 }
 
-.tab-panel:empty {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 247, 241, 0.95));
-}
-
+/* General Layout Elements Inside Panels */
 .section {
-  max-width: 980px;
+  width: 100%;
   margin: 0 auto;
-  padding: 4rem 1.5rem 0;
+  padding: 1.5rem 0;
 }
 
-.section-heading {
-  margin-bottom: 1rem;
+.section-heading h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  margin: 0 0 1rem;
 }
 
 .cards {
   display: grid;
   gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .card {
-  background: var(--surface);
-  padding: 1.4rem;
+  background: var(--bg);
+  padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(31, 54, 39, 0.08);
+  border: 1px solid rgba(31, 54, 39, 0.05);
+}
+
+.card h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-dark);
 }
 
 .callout {
   background: var(--surface);
+  border: 2px dashed rgba(53, 101, 77, 0.2);
   border-radius: 20px;
-  margin: 3rem auto 4rem;
-  box-shadow: 0 10px 25px rgba(31, 54, 39, 0.08);
+  padding: 2.5rem 1.5rem;
   text-align: center;
+  margin-top: 2rem;
 }
 
-/* Animations */
-/* Animates opacity and shifts position upward */
+.button {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 0.8rem 1.8rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background: var(--primary-dark);
+}
+
+/* INNER SPENDING TABS */
+
+.sub-tab-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 0 clamp(1rem, 4vw, 2.5rem);
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #eef4ef;
+}
+
+.sub-tab {
+    position: relative;
+    z-index: 999;
+
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.sub-tab:hover {
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.sub-tab.active {
+  color: var(--primary-dark);
+  background: #fff;
+  border-color: rgba(53, 101, 77, 0.12);
+  box-shadow: 0 8px 20px rgba(31, 54, 39, 0.08);
+}
+
+.sub-tab-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--primary);
+  font-size: 1.15rem;
+}
+
+.sub-tab strong,
+.sub-tab small {
+  display: block;
+}
+
+.sub-tab strong {
+  font-size: 0.92rem;
+}
+
+.sub-tab small {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.sub-tab-panels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  height: auto;
+  overflow: hidden;
+  transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sub-panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+  padding: 1.8rem clamp(1rem, 4vw, 2.5rem) 2.2rem;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px);
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s ease,
+    visibility 0s linear 0.4s;
+}
+
+.sub-panel.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  z-index: 2;
+}
+
+/* FORM */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.optional {
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.field input,
+.field select,
+.field textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(53, 101, 77, 0.18);
+  border-radius: 13px;
+  outline: none;
+  color: var(--text);
+  background: #fbfdfb;
+  padding: 0.82rem 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 125px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(53, 101, 77, 0.09);
+}
+
+.money-input {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(53, 101, 77, 0.18);
+  border-radius: 13px;
+  background: #fbfdfb;
+}
+
+.money-input > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  align-self: stretch;
+  color: #fff;
+  background: var(--primary);
+  font-weight: 900;
+}
+
+.money-input input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.money-input:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(53, 101, 77, 0.09);
+}
+
+.date-field {
+  grid-column: 1 / -1;
+  max-width: 380px;
+}
+
+.today-button {
+  margin-top: 0.45rem;
+  border: 0;
+  padding: 0;
+  color: var(--primary);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.today-button:hover {
+  text-decoration: underline;
+}
+
+.description-field {
+  grid-column: span 2;
+}
+
+.attachment-field {
+  grid-column: span 1;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.field-hint code {
+  padding: 0.1rem 0.25rem;
+  border-radius: 4px;
+  background: #e8efe9;
+  color: var(--primary-dark);
+}
+
+.upload-zone {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 125px;
+  border: 1px dashed rgba(53, 101, 77, 0.35);
+  border-radius: 15px;
+  background: #f8fbf8;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.upload-zone:hover {
+  background: #eef6ef;
+  border-color: var(--primary);
+}
+
+.upload-zone strong {
+  color: var(--primary-dark);
+}
+
+.upload-zone small {
+  color: var(--muted);
+}
+
+.upload-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 0.45rem;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--primary);
+  font-weight: 900;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--border);
+}
+
+.futuristic {
+  position: relative;
+  overflow: hidden;
+}
+
+.futuristic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255,255,255,0.18) 45%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.futuristic:hover::before {
+  transform: translateX(120%);
+}
+
+.button-arrow {
+  font-size: 1.1rem;
+}
+
+.dummy-note {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-align: right;
+  letter-spacing: 0.05em;
+}
+
+/* HISTORY */
+
+.history-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.history-toolbar h3 {
+  margin: 0;
+}
+
+.history-toolbar p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.filter-button {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  color: var(--primary-dark);
+  background: #fff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.spending-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.spending-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+}
+
+.spending-table th,
+.spending-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.spending-table th {
+  color: var(--muted);
+  background: #f5f8f5;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.spending-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.category-pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.22rem 0.55rem;
+  color: var(--primary-dark);
+  background: #e7f0e9;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.spending-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.spending-total span {
+  color: var(--muted);
+}
+
+.spending-total strong {
+  color: var(--primary-dark);
+  font-size: 1.2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.9; }
+}
+
+/* ANIMATIONS */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px); /* Starts 20px lower */
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);    /* Ends at natural position */
+    transform: translateY(0);
   }
 }
 
-/* Smooth fade-in without moving position */
-@keyframes fadeIn {
+@keyframes tabFadeIn {
   from {
     opacity: 0;
+    transform: translateY(15px) scale(0.99);
   }
   to {
-    opacity: 0.9; /* Matches your design's 0.9 opacity */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* TABLET */
+
+@media (max-width: 800px) {
+  .tabs-shell {
+    width: min(100% - 1rem, 1180px);
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .description-field,
+  .attachment-field {
+    grid-column: span 1;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 2.3rem 1rem 5rem;
+    min-height: 235px;
+  }
+
+  .tabs-shell {
+    width: calc(100% - 0.7rem);
+    margin-top: -3rem;
+  }
+
+  .tab-list {
+    border-radius: 14px 14px 0 0;
+  }
+
+  .tab-button {
+    flex: 0 0 145px;
+    min-height: 56px;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .section {
+    padding: 1.6rem 1rem;
+  }
+
+  .page-title {
+    align-items: flex-start;
+  }
+
+  .sub-tab-list {
+    grid-template-columns: 1fr;
+    margin: 0 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-field,
+  .description-field,
+  .attachment-field {
+    grid-column: auto;
+    max-width: none;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-actions .button {
+    width: 100%;
+  }
+
+  .dummy-note {
+    text-align: center;
+  }
+
+  .history-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .filter-button {
+    width: 100%;
+  }
+
+  .spending-total {
+    justify-content: space-between;
+  }
+}
+
+/* VERY SMALL PHONES */
+
+@media (max-width: 380px) {
+  .hero {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .tabs-shell {
+    width: calc(100% - 0.4rem);
+  }
+
+  .tab-button {
+    flex-basis: 135px;
+  }
+
+  .section,
+  .sub-panel {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .sub-tab-list {
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
   }
 }
