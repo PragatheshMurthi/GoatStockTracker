@@ -1,3 +1,33 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp, } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+apiKey: "AIzaSyCKoQAHXTo2YduiXmrZPuNxGTCzukmpONU",
+authDomain: "goatmanagement.firebaseapp.com",
+projectId: "goatmanagement",
+storageBucket: "goatmanagement.firebasestorage.app",
+messagingSenderId: "507936824844",
+appId: "1:507936824844:web:1a237fde68450180709829"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 /* =========================================================
    MAIN + SUB TAB CONTROLLERS
    ========================================================= */
@@ -123,48 +153,102 @@
     const saveExpense = document.getElementById("saveExpense");
 
     if (saveExpense) {
+        
         saveExpense.addEventListener("click", async () => {
+            const name = expenseName?.value.trim() || "";
+            const category = expenseCategory?.value || "";
+            const amount = Number(expenseAmount?.value);
+            const date = expenseDate?.value || "";
+            const description = expenseDescription?.value.trim() || "";
+
+            if (!name) {
+                alert("Please enter the expense name.");
+                expenseName?.focus();
+                return;
+            }
+
+            if (!category) {
+                alert("Please select an expense category.");
+                expenseCategory?.focus();
+                return;
+            }
+
+            if (!Number.isFinite(amount) || amount <= 0) {
+                alert("Please enter a valid expense amount.");
+                expenseAmount?.focus();
+                return;
+            }
+
+            
+            let selectedDate = expenseDate?.value;
+
+            if (!selectedDate) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, "0");
+                const dd = String(today.getDate()).padStart(2, "0");
+
+                selectedDate = `${yyyy}-${mm}-${dd}`;
+
+                if (expenseDate) {
+                    expenseDate.value = selectedDate;
+                }
+            }
+
 
             const expense = {
-                name: expenseName.value,
-                category: expenseCategory.value,
-                amount: expenseAmount.value,
-                date: expenseDate.value,
-                description: expenseDescription.value
+                name,
+                category,
+                amount,
+                date: selectedDate,
+                description,
+                createdAt: serverTimestamp()
             };
 
-            console.log("Saving:", expense);
+            console.log("Saving expense:", expense);
 
-            // Disable button while saving
             saveExpense.disabled = true;
             saveExpense.classList.add("saving");
 
-            const original = saveExpense.innerHTML;
+            const originalContent = saveExpense.innerHTML;
             saveExpense.innerHTML = "<span>Saving...</span>";
 
             try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                const documentReference = await addDoc(
+                    collection(db, "expenses"),
+                    expense
+                );
+
+                console.log(
+                    "Expense saved successfully:",
+                    documentReference.id
+                );
 
                 saveExpense.innerHTML = "<span>Saved ✓</span>";
 
-                // Refresh history if needed
-                // await renderHistory();
+                clearExpenseForm();
 
+                /*
+                * Reload the history from Firestore after the database
+                * write completes.
+                */
+                /*await renderHistory();*/
             } catch (error) {
+                console.error("Failed to save expense:", error);
 
-                saveExpense.innerHTML = "<span>Save Failed ✕</span>";
-                console.error(error);
+                saveExpense.innerHTML =
+                    "<span>Save Failed ✕</span>";
 
+                alert(`Unable to save expense: ${error.message}`);
             } finally {
-
                 setTimeout(() => {
-                    saveExpense.innerHTML = original;
+                    saveExpense.innerHTML = originalContent;
                     saveExpense.disabled = false;
                     saveExpense.classList.remove("saving");
                 }, 1500);
             }
         });
+
     }
 
     function syncInitialStates() {
@@ -190,32 +274,16 @@
 
 async function fetchSpendingHistory() {
 
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve([
-        {
-          date: "Todayyyy",
-          name: "Goat Feed",
-          category: "Feed",
-          amount: 2500
-        },
-        {
-          date: "Yesterday",
-          name: "Veterinary Check",
-          category: "Veterinary",
-          amount: 850
-        },
-        {
-          date: "02 Aug",
-          name: "Transport",
-          category: "Transport",
-          amount: 1200
-        }
-      ]);
-    }, 500);
-  });
+    const snapshot = await getDocs(
+        collection(db, "expenses")
+    );
 
+    return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
 }
+
 
 async function renderHistory() {
 
