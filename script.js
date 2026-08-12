@@ -1,38 +1,9 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp, } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
-import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    query,
-    orderBy,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-apiKey: "AIzaSyCKoQAHXTo2YduiXmrZPuNxGTCzukmpONU",
-authDomain: "goatmanagement.firebaseapp.com",
-projectId: "goatmanagement",
-storageBucket: "goatmanagement.firebasestorage.app",
-messagingSenderId: "507936824844",
-appId: "1:507936824844:web:1a237fde68450180709829"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 /* =========================================================
    MAIN + SUB TAB CONTROLLERS
    ========================================================= */
 
 (() => {
+    const DB_URL = "https://scaling-giggle-qxx47rg7jr42499p-3000.app.github.dev/api/expenses";
     const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
     const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
     const tabPanelsContainer = document.querySelector(".tab-panels");
@@ -139,28 +110,38 @@ const db = getFirestore(app);
     const expenseDescription = document.getElementById("expense-description");
     const expenseAttachment = document.getElementById("expense-attachment");
 
+    function clearExpenseForm() {
+        if (expenseName) expenseName.value = "";
+        if (expenseCategory) expenseCategory.value = "";
+        if (expenseAmount) expenseAmount.value = "";
+        if (expenseDate) expenseDate.value = "";
+        if (expenseDescription) expenseDescription.value = "";
+        if (expenseAttachment) expenseAttachment.value = "";
+    }
+
+
     if (clearExpense) {
         clearExpense.addEventListener("click", () => {
-            if (expenseName) expenseName.value = "";
-            if (expenseCategory) expenseCategory.value = "";
-            if (expenseAmount) expenseAmount.value = "";
-            if (expenseDate) expenseDate.value = "";
-            if (expenseDescription) expenseDescription.value = "";
-            if (expenseAttachment) expenseAttachment.value = "";
+            clearExpenseForm();
         });
     }
 
     const saveExpense = document.getElementById("saveExpense");
 
     if (saveExpense) {
-        
+
         saveExpense.addEventListener("click", async () => {
             const name = expenseName?.value.trim() || "";
             const category = expenseCategory?.value || "";
             const amount = Number(expenseAmount?.value);
             const date = expenseDate?.value || "";
             const description = expenseDescription?.value.trim() || "";
+            
+            // Grab the file input element and its selected file
+            const fileInput = document.getElementById("expenseAttachment");
+            const file = fileInput?.files[0] || null;
 
+            // --- VALIDATIONS ---
             if (!name) {
                 alert("Please enter the expense name.");
                 expenseName?.focus();
@@ -179,9 +160,21 @@ const db = getFirestore(app);
                 return;
             }
 
-            
-            let selectedDate = expenseDate?.value;
+            // Validate File Size (5MB Limit)
+            if (file && file.size > 5 * 1024 * 1024) {
+                alert("File is too large! Maximum size is 5MB.");
+                fileInput.focus();
+                return;
+            }
 
+            // Validate File Type
+            if (file && !['image/jpeg', 'image/png', 'image/gif', 'application/pdf'].includes(file.type)) {
+                alert("Invalid file type! Only images and PDFs are allowed.");
+                fileInput.focus();
+                return;
+            }
+
+            let selectedDate = date;
             if (!selectedDate) {
                 const today = new Date();
                 const yyyy = today.getFullYear();
@@ -195,17 +188,21 @@ const db = getFirestore(app);
                 }
             }
 
+            // --- CONSTRUCT FORM DATA FOR EXPRESS/SQLITE ---
+            // We use FormData instead of a raw object to safely transport binary files
+            const formData = new FormData();
+            formData.append("expenseName", name);
+            formData.append("expenseCategory", category);
+            formData.append("expenseAmount", amount);
+            formData.append("expenseDate", selectedDate);
+            formData.append("expenseDescription", description);
+            
+            if (file) {
+                // Must match the upload.single('expenseAttachment') name on your Express server
+                formData.append("expenseAttachment", file); 
+            }
 
-            const expense = {
-                name,
-                category,
-                amount,
-                date: selectedDate,
-                description,
-                createdAt: serverTimestamp()
-            };
-
-            console.log("Saving expense:", expense);
+            console.log("Saving expense payload to SQLite backend...");
 
             saveExpense.disabled = true;
             saveExpense.classList.add("saving");
@@ -214,30 +211,31 @@ const db = getFirestore(app);
             saveExpense.innerHTML = "<span>Saving...</span>";
 
             try {
-                const documentReference = await addDoc(
-                    collection(db, "expenses"),
-                    expense
-                );
+                // Send the network request to your Express server API endpoint
+                const response = await fetch(DB_URL, {
+                    method: "POST",
+                    body: formData // No Headers needed; fetch handles multipart/form-data automatically
+                });
 
-                console.log(
-                    "Expense saved successfully:",
-                    documentReference.id
-                );
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || "Server failed to process data.");
+                }
+
+                console.log("Expense saved successfully to SQLite ID:", result.expenseId);
 
                 saveExpense.innerHTML = "<span>Saved ✓</span>";
 
                 clearExpenseForm();
 
-                /*
-                * Reload the history from Firestore after the database
-                * write completes.
-                */
-                /*await renderHistory();*/
+                // Optional: call your update UI function if you have one
+                /* await renderHistory(); */
+
             } catch (error) {
                 console.error("Failed to save expense:", error);
 
-                saveExpense.innerHTML =
-                    "<span>Save Failed ✕</span>";
+                saveExpense.innerHTML = "<span>Save Failed ✕</span>";
 
                 alert(`Unable to save expense: ${error.message}`);
             } finally {
@@ -248,8 +246,8 @@ const db = getFirestore(app);
                 }, 1500);
             }
         });
-
     }
+
 
     function syncInitialStates() {
         const activeMainButton = tabButtons.find((button) => button.classList.contains("active")) || tabButtons[0];
@@ -270,52 +268,70 @@ const db = getFirestore(app);
             resizeMainPanel(activeMainPanel);
         }
     });
-})();
 
+    // --- Updated Fetch Function for SQLite ---
 async function fetchSpendingHistory() {
+    try {
+        const response = await fetch(DB_URL);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to fetch history');
+        }
 
-    const snapshot = await getDocs(
-        collection(db, "expenses")
-    );
-
-    return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
+        return await response.json(); 
+    } catch (error) {
+        console.error("Error retrieving spending data:", error);
+        alert(`Could not load history: ${error.message}`);
+        return [];
+    }
 }
 
-
+// --- Updated Render Function with Conditional Download Buttons ---
 async function renderHistory() {
+    const history = await fetchSpendingHistory();
+    const tbody = document.getElementById("spending-history-body");
 
-  const history = await fetchSpendingHistory();
+    if (!tbody) return;
+    tbody.innerHTML = "";
 
-  const tbody = document.getElementById(
-    "spending-history-body"
-  );
+    let total = 0;
 
-  tbody.innerHTML = "";
+    history.forEach(item => {
+        total += item.amount;
 
-  let total = 0;
+        // Default to a completely empty cell string
+        let attachmentCellHTML = '';
+        
+        // The button HTML structure is only drawn if valid binary data is found
+        if (item.attachmentDataUrl) {
+            const fileName = item.attachmentName || 'attachment';
+            
+            attachmentCellHTML = `
+                <a href="${item.attachmentDataUrl}" download="${fileName}" class="download-btn" style="text-decoration: none; color: #0066cc; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 4px;">
+                    📥 Download File
+                </a>`;
+        }
 
-  history.forEach(item => {
+        // Append the row to your table layout structure
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.date}</td>
+            <td>${item.name}</td>
+            <td>
+              <span class="category-pill">
+                ${item.category}
+              </span>
+            </td>
+            <td>₹ ${item.amount.toLocaleString()}</td>
+            <td>${attachmentCellHTML}</td>
+          </tr>
+        `;
+    });
 
-    total += item.amount;
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${item.date}</td>
-        <td>${item.name}</td>
-        <td>
-          <span class="category-pill">
-            ${item.category}
-          </span>
-        </td>
-        <td>₹ ${item.amount.toLocaleString()}</td>
-      </tr>
-    `;
-  });
-
-  document.getElementById(
-    "total-spending"
-  ).textContent = `₹ ${total.toLocaleString()}.00`;
+    const totalDisplay = document.getElementById("total-spending");
+    if (totalDisplay) {
+        totalDisplay.textContent = `₹ ${total.toLocaleString()}.00`;
+    }
 }
+})();
